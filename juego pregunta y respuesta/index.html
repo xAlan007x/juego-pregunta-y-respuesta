@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sabelotodo — Trivia</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div class="eyebrow">Sabelotodo</div>
+    <h1 id="title">Elegí una temática</h1>
+  </div>
+  <div id="content"></div>
+</div>
+
+<script>
+// ---------------------------------------------------------------------------
+// Datos: temáticas y preguntas (10 por temática)
+// ---------------------------------------------------------------------------
+const TOPICS = [
+  {
+    id: "historia",
+    name: "Historia",
+    color: "#B5732A",
+    bg: "#FBF1E6",
+    questions: [
+      { type: "vf", q: "La Revolución de Mayo ocurrió en 1810.", answer: true, explain: "La Revolución de Mayo tuvo lugar en Buenos Aires en mayo de 1810, marcando el inicio del proceso de independencia." },
+      { type: "mc", q: "¿Quién fue el primer presidente constitucional de Argentina?", options: ["Bernardino Rivadavia", "Justo José de Urquiza", "Domingo F. Sarmiento", "Bartolomé Mitre"], answer: 1, explain: "Urquiza fue el primer presidente constitucional de la Confederación Argentina, electo en 1854." },
+      { type: "vf", q: "La Segunda Guerra Mundial terminó en 1945.", answer: true, explain: "La rendición de Japón en septiembre de 1945 puso fin a la Segunda Guerra Mundial." },
+      { type: "mc", q: "¿En qué año cayó el Muro de Berlín?", options: ["1985", "1989", "1991", "1993"], answer: 1, explain: "El Muro de Berlín cayó el 9 de noviembre de 1989." },
+      { type: "vf", q: "Napoleón Bonaparte nació en Córcega.", answer: true, explain: "Napoleón nació en Ajaccio, Córcega, en 1769." },
+      { type: "mc", q: "¿Quién llegó a América en 1492?", options: ["Vasco da Gama", "Cristóbal Colón", "Fernando de Magallanes", "Américo Vespucio"], answer: 1, explain: "Cristóbal Colón llegó a América en 1492 en su primer viaje." },
+      { type: "vf", q: "La Revolución Francesa comenzó en 1789.", answer: true, explain: "La toma de la Bastilla el 14 de julio de 1789 marcó su inicio." },
+      { type: "mc", q: "¿En qué año finalizó la guerra en Europa?", options: ["1943", "1944", "1945", "1946"], answer: 2, explain: "Alemania se rindió en mayo de 1945, terminando la guerra en Europa." },
+      { type: "vf", q: "El Imperio Romano de Occidente cayó en el año 476.", answer: true, explain: "La caída de Rómulo Augústulo en 476 marca tradicionalmente ese fin." },
+      { type: "mc", q: "¿Quién lideró la independencia de la India?", options: ["Mahatma Gandhi", "Nelson Mandela", "Winston Churchill", "Ho Chi Minh"], answer: 0, explain: "Gandhi lideró el movimiento de independencia mediante la resistencia no violenta." },
+    ],
+  },
+  {
+    id: "ciencia",
+    name: "Ciencia",
+    color: "#2E7D5B",
+    bg: "#EAF5EE",
+    questions: [
+      { type: "mc", q: "¿Cuál es el planeta más cercano al Sol?", options: ["Venus", "Mercurio", "Marte", "Tierra"], answer: 1, explain: "Mercurio orbita más cerca del Sol que cualquier otro planeta." },
+      { type: "vf", q: "El agua hierve a 100°C al nivel del mar.", answer: true, explain: "A presión atmosférica normal, el agua hierve a 100°C." },
+      { type: "mc", q: "¿Cuál es el hueso más largo del cuerpo humano?", options: ["Húmero", "Tibia", "Fémur", "Radio"], answer: 2, explain: "El fémur, en el muslo, es el hueso más largo del cuerpo." },
+      { type: "vf", q: "Los humanos tienen 3 pulmones.", answer: false, explain: "Los humanos tienen dos pulmones, uno a cada lado del corazón." },
+      { type: "mc", q: "¿Qué gas necesitan las plantas para hacer fotosíntesis?", options: ["Oxígeno", "Nitrógeno", "Dióxido de carbono", "Hidrógeno"], answer: 2, explain: "Las plantas usan CO2, agua y luz solar para producir glucosa y oxígeno." },
+      { type: "vf", q: "La velocidad de la luz es mayor que la del sonido.", answer: true, explain: "La luz viaja a unos 300.000 km/s, mucho más rápido que el sonido." },
+      { type: "mc", q: "¿Cuál es el elemento más abundante en el universo?", options: ["Oxígeno", "Carbono", "Hidrógeno", "Helio"], answer: 2, explain: "El hidrógeno constituye cerca del 75% de la materia elemental del universo." },
+      { type: "vf", q: "El corazón humano tiene cuatro cámaras.", answer: true, explain: "Tiene dos aurículas y dos ventrículos, cuatro cámaras en total." },
+      { type: "mc", q: "¿Qué órgano produce la insulina?", options: ["Hígado", "Páncreas", "Riñón", "Bazo"], answer: 1, explain: "El páncreas produce insulina para regular el azúcar en sangre." },
+      { type: "vf", q: "La Luna genera luz propia.", answer: false, explain: "La Luna no emite luz propia; refleja la luz del Sol." },
+    ],
+  },
+  {
+    id: "geografia",
+    name: "Geografía",
+    color: "#2A5FA8",
+    bg: "#EAF1FB",
+    questions: [
+      { type: "mc", q: "¿Cuál es el río más largo del mundo?", options: ["Nilo", "Amazonas", "Yangtsé", "Mississippi"], answer: 1, explain: "Según muchas mediciones, el Amazonas es el río más largo del mundo." },
+      { type: "vf", q: "Brasil limita con Argentina.", answer: true, explain: "Comparten frontera en el sur, cerca de las Cataratas del Iguazú." },
+      { type: "mc", q: "¿Cuál es la capital de Australia?", options: ["Sídney", "Melbourne", "Canberra", "Perth"], answer: 2, explain: "Canberra, no Sídney, es la capital de Australia." },
+      { type: "vf", q: "El desierto del Sahara está en Asia.", answer: false, explain: "El Sahara se encuentra en el norte de África." },
+      { type: "mc", q: "¿Cuál es el país más grande por superficie?", options: ["China", "Estados Unidos", "Canadá", "Rusia"], answer: 3, explain: "Rusia es el país más extenso del mundo." },
+      { type: "vf", q: "El Everest es la montaña más alta del mundo.", answer: true, explain: "El Everest tiene la mayor altitud sobre el nivel del mar." },
+      { type: "mc", q: "¿Cuál es el océano más grande?", options: ["Atlántico", "Índico", "Pacífico", "Ártico"], answer: 2, explain: "El océano Pacífico es el más extenso y profundo del planeta." },
+      { type: "vf", q: "Chile y Argentina comparten la Cordillera de los Andes.", answer: true, explain: "Los Andes recorren gran parte de la frontera entre ambos países." },
+      { type: "mc", q: "¿En qué continente está Egipto?", options: ["Asia", "África", "Europa", "Oceanía"], answer: 1, explain: "Egipto se encuentra en el noreste de África." },
+      { type: "vf", q: "La Antártida es el continente más frío.", answer: true, explain: "Registra las temperaturas más bajas del planeta." },
+    ],
+  },
+  {
+    id: "entretenimiento",
+    name: "Entretenimiento",
+    color: "#A83E6C",
+    bg: "#FBEAF3",
+    questions: [
+      { type: "vf", q: "'El Padrino' ganó el Óscar a Mejor Película.", answer: true, explain: "'El Padrino' ganó el Óscar a Mejor Película en 1973." },
+      { type: "mc", q: "¿Qué banda británica lanzó 'Abbey Road'?", options: ["The Rolling Stones", "The Beatles", "Queen", "Pink Floyd"], answer: 1, explain: "'Abbey Road' es un álbum de The Beatles de 1969." },
+      { type: "mc", q: "¿Quién pintó 'La Mona Lisa'?", options: ["Miguel Ángel", "Rafael", "Leonardo da Vinci", "Donatello"], answer: 2, explain: "Leonardo da Vinci la pintó a principios del siglo XVI." },
+      { type: "vf", q: "'Los Simpson' se estrenó en la década de 1980.", answer: true, explain: "Se estrenó como serie completa en diciembre de 1989." },
+      { type: "mc", q: "¿En qué ciudad se ambienta 'Friends'?", options: ["Los Ángeles", "Chicago", "Nueva York", "Boston"], answer: 2, explain: "'Friends' se ambienta principalmente en Nueva York." },
+      { type: "vf", q: "'Titanic' fue dirigida por Steven Spielberg.", answer: false, explain: "'Titanic' fue dirigida por James Cameron, no por Spielberg." },
+      { type: "mc", q: "¿Quién compuso la Novena Sinfonía?", options: ["Mozart", "Bach", "Beethoven", "Chopin"], answer: 2, explain: "Beethoven compuso la Novena Sinfonía, estrenada en 1824." },
+      { type: "vf", q: "Walt Disney creó al personaje Mickey Mouse.", answer: true, explain: "Disney y Ub Iwerks crearon a Mickey Mouse en 1928." },
+      { type: "mc", q: "¿En qué década se estrenó 'Star Wars' original?", options: ["1960s", "1970s", "1980s", "1990s"], answer: 1, explain: "La primera película se estrenó en 1977." },
+      { type: "vf", q: "'Harry Potter' fue escrito por J.K. Rowling.", answer: true, explain: "J.K. Rowling es la autora de la saga de Harry Potter." },
+    ],
+  },
+  {
+    id: "deportes",
+    name: "Deportes",
+    color: "#C4841E",
+    bg: "#FDF3E3",
+    questions: [
+      { type: "vf", q: "Argentina ganó el Mundial de fútbol 2022.", answer: true, explain: "Argentina se consagró campeona en Qatar 2022 tras vencer a Francia por penales." },
+      { type: "mc", q: "¿Cada cuántos años se celebran los Juegos Olímpicos de verano?", options: ["2", "3", "4", "5"], answer: 2, explain: "Se celebran cada cuatro años." },
+      { type: "mc", q: "¿Cuántos jugadores tiene un equipo de básquet en cancha?", options: ["4", "5", "6", "7"], answer: 1, explain: "Cada equipo juega con 5 jugadores en cancha." },
+      { type: "vf", q: "El tenis se juega con un balón.", answer: false, explain: "El tenis se juega con una pelota pequeña, no con un balón." },
+      { type: "mc", q: "¿En qué deporte se usa el término 'jaque mate'?", options: ["Damas", "Ajedrez", "Backgammon", "Go"], answer: 1, explain: "'Jaque mate' indica el fin de una partida de ajedrez." },
+      { type: "vf", q: "El maratón mide 42,195 km.", answer: true, explain: "Esa es la distancia oficial de un maratón." },
+      { type: "mc", q: "¿Cuántos jugadores tiene un equipo de fútbol en cancha?", options: ["9", "10", "11", "12"], answer: 2, explain: "Un equipo de fútbol juega con 11 jugadores, incluido el arquero." },
+      { type: "vf", q: "El rugby y el fútbol americano usan la misma pelota.", answer: false, explain: "Aunque ambas son ovaladas, tienen diseños distintos." },
+      { type: "mc", q: "¿En qué deporte se usa el término 'ace'?", options: ["Vóley", "Tenis", "Golf", "Básquet"], answer: 1, explain: "'Ace' es un saque directo que el rival no puede tocar." },
+      { type: "vf", q: "Los Juegos Olímpicos modernos comenzaron en Atenas en 1896.", answer: true, explain: "La primera edición moderna se celebró en Atenas en 1896." },
+    ],
+  },
+  {
+    id: "tecnologia",
+    name: "tecnologia",
+    color: "#04d9ff",
+    bg: "#000000",
+    questions: [
+      { type: "vf", q: "El hardware son las partes físicas de una computadora..", answer: true, explain: "el hardware son todos los componentes que se pueden tocar, como el teclado, el monitor, el mouse y el gabinete.." },
+      { type: "mc", q: "¿Qué significa la sigla HTML?", options: ["Hyper Text Markup Language", "High Transfer Machine Language", "Home Tool Markup Language", "Hyper Tool Machine Link"], answer: 1, explain: "HTML significa HyperText Markup Language, el lenguaje que se usa para crear la estructura de las páginas web.." },
+      { type: "mc", q: "¿Cuál de estos es un lenguaje de programación?", options: ["google", "chrome", "windows", "paython"], answer: 4, explain: "Python es un lenguaje de programación. Google es un buscador, Windows es un sistema operativo y Chrome es un navegador.." },
+      { type: "vf", q: "Un navegador web sirve para crear computadoras.", answer: false, explain: "Porque un navegador sirve para visitar páginas web, no para fabricar computadoras." },
+      { type: "mc", q: "¿Cuál de estos dispositivos es de entrada?", options: ["monitor", "impresora", "parlantes", "teclado"], answer: 4, explain: "El teclado permite ingresar información a la computadora.." },
+      { type: "vf", q: "¿Qué se necesita si o si un navegador para acceder a una pagina web?", answer: true, explain: "Un navegador como Chrome, Edge o Firefox permite abrir y visitar páginas de Internet.." },
+      { type: "mc", q: "¿¿Qué protocolo se utiliza para navegar de forma segura por Internet??", options: ["FTP", "HTTP", "HTTPS", "USB"], answer: 3, explain: "HTTPS cifra la información entre tu navegador y la página web, haciendo la navegación más segura." },
+      { type: "vf", q: "Un pendrive sirve únicamente para conectarse a Internet.", answer: false, explain: "Porque un pendrive se utiliza para guardar y transportar archivos, no para conectarse a Internet." },
+      { type: "mc", q: "¿Cuál de estos es un sistema operativo?", options: ["microsoft", "opera gx", "fox", "linux"], answer: 4, explain: "'linux es un sistema operativo. Word es un procesador de texto, Chrome es un navegador y YouTube es una plataforma de videos." },
+      { type: "vf", q: "Un archivo con extensión .jpg o .png es un archivo de imagen.", answer: true, explain: "Porque las extensiones .jpg y .png corresponden a archivos de imagen, utilizados para guardar fotografías, dibujos y otros gráficos digitales." },
+    ],
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Estado
+// ---------------------------------------------------------------------------
+let state = {
+  screen: "home", // home | quiz | result
+  topic: null,
+  qIndex: 0,
+  score: 0,
+  selected: null,
+  revealed: false,
+};
+
+const titleEl = document.getElementById("title");
+const contentEl = document.getElementById("content");
+
+function isCorrectChoice(question, value) {
+  return value === question.answer;
+}
+
+function startTopic(topic) {
+  state = { screen: "quiz", topic, qIndex: 0, score: 0, selected: null, revealed: false };
+  render();
+}
+
+function handleAnswer(value) {
+  if (state.revealed) return;
+  state.selected = value;
+  state.revealed = true;
+  const question = state.topic.questions[state.qIndex];
+  if (isCorrectChoice(question, value)) state.score += 1;
+  render();
+}
+
+function nextQuestion() {
+  if (state.qIndex + 1 < state.topic.questions.length) {
+    state.qIndex += 1;
+    state.selected = null;
+    state.revealed = false;
+    render();
+  } else {
+    state.screen = "result";
+    render();
+  }
+}
+
+function restart() {
+  state = { screen: "home", topic: null, qIndex: 0, score: 0, selected: null, revealed: false };
+  render();
+}
+
+// ---------------------------------------------------------------------------
+// Render
+// ---------------------------------------------------------------------------
+function render() {
+  if (state.screen === "home") renderHome();
+  else if (state.screen === "quiz") renderQuiz();
+  else if (state.screen === "result") renderResult();
+}
+
+function renderHome() {
+  titleEl.textContent = "Elegí una temática";
+  const grid = document.createElement("div");
+  grid.className = "topics-grid";
+
+  TOPICS.forEach((topic) => {
+    const card = document.createElement("button");
+    card.className = "topic-card";
+    card.style.background = topic.bg;
+    card.innerHTML = `
+      <div class="topic-name" style="color:${topic.color}">${topic.name}</div>
+      <div class="topic-count">${topic.questions.length} preguntas</div>
+    `;
+    card.addEventListener("click", () => startTopic(topic));
+    grid.appendChild(card);
+  });
+
+  contentEl.innerHTML = "";
+  contentEl.appendChild(grid);
+}
+
+function renderQuiz() {
+  const topic = state.topic;
+  const question = topic.questions[state.qIndex];
+  titleEl.textContent = topic.name;
+
+  const progressPct = ((state.qIndex + (state.revealed ? 1 : 0)) / topic.questions.length) * 100;
+
+  const wrapper = document.createElement("div");
+
+  wrapper.innerHTML = `
+    <div class="quiz-meta">
+      <span>Pregunta ${state.qIndex + 1} de ${topic.questions.length}</span>
+      <span>Puntaje: ${state.score}</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" style="width:${progressPct}%; background:${topic.color}"></div>
+    </div>
+    <div class="question-card">
+      <div class="question-kind" style="color:${topic.color}">
+        ${question.type === "vf" ? "Verdadero o falso" : "Opción múltiple"}
+      </div>
+      <div class="question-text">${question.q}</div>
+    </div>
+    <div class="options" id="options"></div>
+  `;
+
+  const optionsEl = wrapper.querySelector("#options");
+
+  const choices =
+    question.type === "vf"
+      ? [{ label: "Verdadero", value: true }, { label: "Falso", value: false }]
+      : question.options.map((opt, idx) => ({ label: opt, value: idx }));
+
+  choices.forEach((choice) => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.disabled = state.revealed;
+
+    const isSelected = state.selected === choice.value;
+    const isCorrect = isCorrectChoice(question, choice.value);
+
+    if (state.revealed && isCorrect) btn.classList.add("correct");
+    else if (state.revealed && isSelected && !isCorrect) btn.classList.add("wrong");
+
+    let mark = "";
+    if (state.revealed && isCorrect) mark = '<span class="mark">✓</span>';
+    else if (state.revealed && isSelected && !isCorrect) mark = '<span class="mark">✕</span>';
+
+    btn.innerHTML = `<span>${choice.label}</span>${mark}`;
+    btn.addEventListener("click", () => handleAnswer(choice.value));
+    optionsEl.appendChild(btn);
+  });
+
+  if (state.revealed && state.selected !== null && !isCorrectChoice(question, state.selected)) {
+    const explainBox = document.createElement("div");
+    explainBox.className = "explain-box";
+    explainBox.innerHTML = `<span class="icon">ⓘ</span><span>${question.explain}</span>`;
+    wrapper.appendChild(explainBox);
+  }
+
+  if (state.revealed) {
+    const nextBtn = document.createElement("button");
+    nextBtn.className = "next-btn";
+    nextBtn.textContent =
+      state.qIndex + 1 < topic.questions.length ? "Siguiente pregunta →" : "Ver resultado →";
+    nextBtn.addEventListener("click", nextQuestion);
+    wrapper.appendChild(nextBtn);
+  }
+
+  contentEl.innerHTML = "";
+  contentEl.appendChild(wrapper);
+}
+
+function renderResult() {
+  const topic = state.topic;
+  titleEl.textContent = "¡Resultado final!";
+
+  const message =
+    state.score === topic.questions.length
+      ? "¡Puntaje perfecto!"
+      : state.score >= topic.questions.length / 2
+      ? "¡Buen trabajo!"
+      : "Seguí practicando.";
+
+  const wrapper = document.createElement("div");
+  wrapper.innerHTML = `
+    <div class="result-box">
+      <div class="result-topic">Temática: ${topic.name}</div>
+      <div class="result-score">${state.score} / ${topic.questions.length}</div>
+      <div class="result-message">${message}</div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-secondary" id="retryBtn">↻ Repetir</button>
+      <button class="btn-primary" id="restartBtn">Otra temática</button>
+    </div>
+  `;
+
+  wrapper.querySelector("#retryBtn").addEventListener("click", () => startTopic(topic));
+  wrapper.querySelector("#restartBtn").addEventListener("click", restart);
+
+  contentEl.innerHTML = "";
+  contentEl.appendChild(wrapper);
+}
+
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,260 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #1e1b2e;
+  color: #f4f1ea;
+  font-family: Georgia, "Iowan Old Style", serif;
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.app {
+  width: 100%;
+  max-width: 560px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #e8b94b;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  margin-bottom: 6px;
+}
+
+.header h1 {
+  font-size: 34px;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Pantalla de inicio */
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.topic-card {
+  cursor: pointer;
+  border: none;
+  border-radius: 14px;
+  padding: 24px 18px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #2a2550;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease;
+  font-family: inherit;
+}
+
+.topic-card:hover {
+  transform: translateY(-3px);
+}
+
+.topic-icon {
+  width: 26px;
+  height: 26px;
+}
+
+.topic-name {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.topic-count {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 13px;
+  color: #5a5470;
+}
+
+/* Pantalla de pregunta */
+.quiz-meta {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 13px;
+  color: #b8b3cc;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.progress-track {
+  height: 6px;
+  border-radius: 3px;
+  background: #332e4a;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.question-card {
+  background: #2a2550;
+  border-radius: 16px;
+  padding: 28px 24px;
+  margin-bottom: 20px;
+}
+
+.question-kind {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  margin-bottom: 10px;
+}
+
+.question-text {
+  font-size: 21px;
+  line-height: 1.4;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option {
+  cursor: pointer;
+  text-align: left;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: #2e2a44;
+  color: #f4f1ea;
+  font-size: 16px;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+.option.correct {
+  background: #274a38;
+  border-color: #4caf7d;
+}
+
+.option.wrong {
+  background: #4a2a2a;
+  border-color: #e1574c;
+}
+
+.option .mark {
+  font-size: 16px;
+}
+
+.explain-box {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #3a2a22;
+  border: 1px solid #e8b94b;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #f4e9d8;
+}
+
+.explain-box .icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #e8b94b;
+}
+
+.next-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: none;
+  background: #e8b94b;
+  color: #2a2550;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Pantalla de resultado */
+.result-box {
+  text-align: center;
+  background: #2a2550;
+  border-radius: 16px;
+  padding: 40px 28px;
+  margin-bottom: 20px;
+}
+
+.result-topic {
+  font-size: 15px;
+  color: #b8b3cc;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.result-score {
+  font-size: 56px;
+  font-weight: 700;
+  margin: 12px 0;
+  color: #e8b94b;
+}
+
+.result-message {
+  font-size: 16px;
+}
+
+.result-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-secondary,
+.btn-primary {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: none;
+  font-size: 15px;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-secondary {
+  background: #332e4a;
+  color: #f4f1ea;
+}
+
+.btn-primary {
+  background: #e8b94b;
+  color: #2a2550;
+  font-weight: 700;
+}
